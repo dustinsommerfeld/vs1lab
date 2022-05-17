@@ -16,8 +16,6 @@ const router = express.Router();
 /**
  * The module "geotag" exports a class GeoTagStore. 
  * It represents geotags.
- * 
- * TODO: implement the module in the file "../models/geotag.js"
  */
 // eslint-disable-next-line no-unused-vars
 const GeoTag = require('../models/geotag');
@@ -25,8 +23,6 @@ const GeoTag = require('../models/geotag');
 /**
  * The module "geotag-store" exports a class GeoTagStore. 
  * It provides an in-memory store for geotag objects.
- * 
- * TODO: implement the module in the file "../models/geotag-store.js"
  */
 // eslint-disable-next-line no-unused-vars
 const GeoTagStore = require('../models/geotag-store');
@@ -34,13 +30,12 @@ const GeoTagStore = require('../models/geotag-store');
 /**
  * The module "geotag-examples" ...
  * ...
- *
- * TODO: implement the module in the file "../models/geotag-examples.js"
  */
 // eslint-disable-next-line no-unused-vars
 const GeoTagExamples = require("../models/geotag-examples");
 
-
+var tagStore = new GeoTagStore();
+tagStore.populate();
 
 
 /**
@@ -52,10 +47,7 @@ const GeoTagExamples = require("../models/geotag-examples");
  * As response, the ejs-template is rendered without geotag objects.
  */
 
-// TODO: extend the following route example if necessary
 router.get('/', (req, res) => {
-  let tagStore = new GeoTagStore();
-  tagStore.populate();
   res.render('index', { taglist: tagStore.geoTags, userLatitude: "", userLongitude: "" })
 });
 
@@ -80,15 +72,13 @@ router.post('/tagging', (req, res) => {
   let longitude = req.body.tagging_longitude;
   let hashtag = req.body.tagging_hashtag;
 
-  let tagStore = new GeoTagStore();
-  tagStore.populate();
-
   let geoTagObject = new GeoTag(name, latitude, longitude, hashtag);
 
-  let tagsInMemory = tagStore.getNearbyGeoTags(geoTagObject);
-  tagsInMemory.push(geoTagObject);
+  let nearbyGeoTags = tagStore.getNearbyGeoTags(geoTagObject);
+  nearbyGeoTags.push(geoTagObject);
+  tagStore.addGeoTag(geoTagObject);
 
-  res.render('index', { taglist: tagsInMemory, userLatitude: req.body.tagging_latitude, userLongitude: req.body.tagging_longitude  })
+  res.render('index', { taglist: nearbyGeoTags, userLatitude: req.body.tagging_latitude, userLongitude: req.body.tagging_longitude  })
 });
 
 /**
@@ -110,12 +100,9 @@ router.post('/tagging', (req, res) => {
 router.post('/discovery', (req, res) => {
   let keyword = req.body.discovery_searchterm;
 
-  let tagStore = new GeoTagStore();
-  tagStore.populate();
+  let nearbyGeoTags = tagStore.searchNearbyGeoTags(keyword);
 
-  let tagsInMemory = tagStore.searchNearbyGeoTags(keyword);
-
-  res.render('index', { taglist: tagsInMemory, userLatitude: req.body.discovery_latitude, userLongitude: req.body.discovery_longitude })
+  res.render('index', { taglist: nearbyGeoTags, userLatitude: req.body.discovery_latitude, userLongitude: req.body.discovery_longitude })
 });
 
 module.exports = router;
