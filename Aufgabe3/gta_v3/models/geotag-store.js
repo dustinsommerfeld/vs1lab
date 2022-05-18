@@ -53,9 +53,9 @@ class InMemoryGeoTagStore {
         let distance;
 
         for (let i = 0; i < this.#geoTags.length; i++) {
-            console.log(this.#geoTags[i]);
             distance = this.calculateDistance(location, this.#geoTags[i]);
-            if (distance < 0.282) {
+            //distance < 0.282
+            if (distance < 10) {
                 nearbyGeoTags.push(this.#geoTags[i]);
             }
         }
@@ -96,8 +96,7 @@ class InMemoryGeoTagStore {
 
    populate() {
         let tagList = GeoTagExamples.tagList;
-        // TODO Mach die ÖLF raus!
-        for (var i = 0; i < 11; i++) {
+        for (let i = 0; i < (GeoTagExamples.tagList).length; i++) {
                 this.addGeoTag(new GeoTag(tagList[i][0], tagList[i][1], tagList[i][2], tagList[i][3]));
         }
     }

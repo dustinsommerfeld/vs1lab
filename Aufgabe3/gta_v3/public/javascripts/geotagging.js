@@ -33,8 +33,8 @@ function updateMap(locationHelper) {
  * (3) Den Wert des Attribut value verändern mit Instanz von locationHelper und entsprechenden Coords
  */
 function updateLocation () {
-    if (document.getElementById("discovery_latitude").getAttribute("value" )=== "" ||
-        document.getElementById("discovery_longitude").getAttribute("value")=== "" )
+    if (document.getElementById("tagging_latitude").getAttribute("value" ) === "" ||
+        document.getElementById("tagging_longitude").getAttribute("value")=== "" )
     {
         LocationHelper.findLocation(function (locationHelper) {
             document.getElementById("discovery_latitude")
@@ -47,10 +47,11 @@ function updateLocation () {
                 .setAttribute("value", locationHelper.longitude);
             updateMap(locationHelper);
         })
-        document.addEventListener("DOMContentLoaded", updateLocation, true);
+
     }
 }
 
+document.addEventListener("DOMContentLoaded", updateLocation, true);
 
 
 // Wait for the page to fully load its DOM content, then call updateLocation
