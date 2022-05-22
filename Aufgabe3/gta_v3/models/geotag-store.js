@@ -59,7 +59,6 @@ class InMemoryGeoTagStore {
                 nearbyGeoTags.push(this.#geoTags[i]);
             }
         }
-        console.log(nearbyGeoTags);
         return nearbyGeoTags;
     }
 

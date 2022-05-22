@@ -20,11 +20,13 @@ console.log("The geoTagging script is going to start...");
  * A function to retrieve the current location and update the page.
  * It is called once the page has been fully loaded.
  */
-function updateMap(locationHelper) {
+function updateMap(lat, long) {
+    let nearTaglist = JSON.parse(document.getElementById("mapView").getAttribute("data-tags"));
     let mapManager = new MapManager("1B01AJ2nIgqKzmdYXhvgQbCVZltB6csW");
-    let mapUrl = mapManager.getMapUrl(locationHelper.latitude, locationHelper.longitude);
+    let mapUrl = mapManager.getMapUrl(lat, long, nearTaglist);
     document.getElementById("mapView").setAttribute("src", mapUrl);
 }
+
 
 /*
  * (1) Mit static function LocationHelper-Instanz holen (callback-function als Parameter die locationHelper Instanz
@@ -45,9 +47,12 @@ function updateLocation () {
                 .setAttribute("value", locationHelper.longitude);
             document.getElementById("tagging_longitude")
                 .setAttribute("value", locationHelper.longitude);
-            updateMap(locationHelper);
+            updateMap(locationHelper.latitude, locationHelper.longitude);
         })
-
+    } else {
+            let lat = document.getElementById("tagging_latitude").getAttribute("value");
+            let long = document.getElementById("tagging_longitude").getAttribute("value");
+            updateMap(lat, long);
     }
 }
 
