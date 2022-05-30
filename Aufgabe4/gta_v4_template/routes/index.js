@@ -98,7 +98,7 @@ router.post('/api/geotags', (req, res) => {
     let hashtag = req.body.discovery_hashtag;
 
     let geoTagObject = new GeoTag(name, latitude, longitude, hashtag);
-
+    tagStore.addGeoTag(geoTagObject);
     let geoTagAsJson = req.query.toJSON(geoTagObject);
 
     res.render('index', {
@@ -116,10 +116,14 @@ router.post('/api/geotags', (req, res) => {
  * The requested tag is rendered as JSON in the response.
  */
 router.get('/api/geotags/:id', (req, res) => {
+    //id is specified via name of specific GeoTag
     let geoTagID = req.params.id;
 
+    let foundGeoTag = tagStore.searchGeoTag(geoTagID);
+    //TODO Was wenn foundGeoTag == null, weil GeoTag mit dieser id nicht in Store?
+
     res.render('index', {
-        geotagID: JSON.stringify(geoTagID)
+        geotagID: JSON.stringify(foundGeoTag)
     })
 });
 
@@ -139,12 +143,12 @@ router.get('/api/geotags/:id', (req, res) => {
 router.put('/api/geotags/:id', (req, res) => {
     let geoTagID = req.params.id;
     let geoTag = JSON.stringify(req.query.geoTagObject);
-    let value = req.body.valueOf(geoTag);
+    // let value = req.body.valueOf(geoTag);
 
-    geoTag.changeGeoTag(value, geoTagID); // keine Ahnung wie ich das mit der ID in Verbindung setze :D
+    geoTag.changeGeoTag(geoTag, geoTagID);
 
     res.render('index', {
-        resourceURL: JSON.stringify(geoTag.url)
+        resourceURL: JSON.stringify(geoTag.url) //TODO Warum hier url zurückgeben und nicht den geoTag
     })
 });
 
@@ -162,36 +166,11 @@ router.delete('/api/geotags/:id', (req, res) => {
     let geoTagID = req.params.id;
     let geoTag = JSON.stringify(req.query.geoTagObject);
 
-    geoTag.remove(geoTagID);
+    let removedGeoTag = tagStore.removeGeoTag(geoTagID);
 
     res.render('index', {
-        resourceURL: JSON.stringify(geoTag.url)
+        resourceURL: JSON.stringify(geoTag.url) //TODO Hier auch wieder: Warum url und nicht removedGeoTag?
     })
 });
-
-/* old tagging
-router.post('/tagging', (req, res) => {
-    let name = req.body.tagging_name;
-    let latitude = parseFloat(req.body.tagging_latitude);
-    let longitude = parseFloat(req.body.tagging_longitude);
-    let hashtag = req.body.tagging_hashtag;
-
-    let geoTagObject = new GeoTag(name, latitude, longitude, hashtag);
-
-    let nearbyGeoTags = tagStore.getNearbyGeoTags(geoTagObject);
-    nearbyGeoTags.push(geoTagObject);
-    tagStore.addGeoTag(geoTagObject);
-
-    res.render('index', { taglist: nearbyGeoTags, userLatitude: req.body.tagging_latitude, userLongitude: req.body.tagging_longitude, mapTaglist: JSON.stringify(nearbyGeoTags)  })
-}); */
-
-/* old discovery
-router.post('/discovery', (req, res) => {
-    let keyword = req.body.discovery_searchterm;
-
-    let nearbyGeoTags = tagStore.searchNearbyGeoTags(keyword);
-
-    res.render('index', { taglist: nearbyGeoTags, userLatitude: req.body.discovery_latitude, userLongitude: req.body.discovery_longitude, mapTaglist: JSON.stringify(nearbyGeoTags) })
-}); */
 
 module.exports = router;
