@@ -100,10 +100,7 @@ class InMemoryGeoTagStore {
 
     changeGeoTag(geoTag, id){
         let foundGeoTag = this.searchGeoTag(id);
-        console.log(foundGeoTag);
         if(foundGeoTag !== undefined) {
-            console.log(foundGeoTag)
-            console.log(foundGeoTag.name)
             this.removeGeoTag(foundGeoTag.name)
             this.#geoTags.unshift(geoTag);
         }
