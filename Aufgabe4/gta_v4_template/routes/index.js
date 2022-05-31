@@ -72,7 +72,12 @@ router.post('/tagging', (req, res) => {
     nearbyGeoTags.push(geoTagObject);
     tagStore.addGeoTag(geoTagObject);
 
-    res.render('index', { taglist: nearbyGeoTags, userLatitude: req.body.tagging_latitude, userLongitude: req.body.tagging_longitude, mapTaglist: JSON.stringify(nearbyGeoTags)  })
+    res.render('index', { 
+        taglist: nearbyGeoTags, 
+        userLatitude: req.body.tagging_latitude, 
+        userLongitude: req.body.tagging_longitude, 
+        mapTaglist: JSON.stringify(nearbyGeoTags)  
+    })
 });
 
 /**
