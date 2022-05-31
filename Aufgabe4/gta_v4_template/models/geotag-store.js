@@ -43,7 +43,7 @@ class InMemoryGeoTagStore {
     }
 
     removeGeoTag(name) {
-        for (let i = 0; i < this.#geoTags.length - 1; i++) {
+        for (let i = 0; i < this.#geoTags.length; i++) {
             if (this.#geoTags[i].name === name) {
                 let removedGeoTag = this.#geoTags[i];
                 this.#geoTags.splice(i, 1);
@@ -100,7 +100,10 @@ class InMemoryGeoTagStore {
 
     changeGeoTag(geoTag, id){
         let foundGeoTag = this.searchGeoTag(id);
+        console.log(foundGeoTag);
         if(foundGeoTag !== undefined) {
+            console.log(foundGeoTag)
+            console.log(foundGeoTag.name)
             this.removeGeoTag(foundGeoTag.name)
             this.#geoTags.unshift(geoTag);
         }
