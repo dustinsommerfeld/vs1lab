@@ -72,7 +72,12 @@ router.post('/tagging', (req, res) => {
     nearbyGeoTags.push(geoTagObject);
     tagStore.addGeoTag(geoTagObject);
 
-    res.render('index', { taglist: nearbyGeoTags, userLatitude: req.body.tagging_latitude, userLongitude: req.body.tagging_longitude, mapTaglist: JSON.stringify(nearbyGeoTags)  })
+    res.render('index', { 
+        taglist: nearbyGeoTags, 
+        userLatitude: req.body.tagging_latitude, 
+        userLongitude: req.body.tagging_longitude, 
+        mapTaglist: JSON.stringify(nearbyGeoTags)  
+    })
 });
 
 /**
@@ -96,7 +101,12 @@ router.post('/discovery', (req, res) => {
 
     let nearbyGeoTags = tagStore.searchNearbyGeoTags(keyword);
 
-    res.render('index', { taglist: nearbyGeoTags, userLatitude: req.body.discovery_latitude, userLongitude: req.body.discovery_longitude, mapTaglist: JSON.stringify(nearbyGeoTags) })
+    res.render('index', { 
+        taglist: nearbyGeoTags, 
+        userLatitude: req.body.discovery_latitude, 
+        userLongitude: req.body.discovery_longitude, 
+        mapTaglist: JSON.stringify(nearbyGeoTags) 
+    })
 });
 
 // API routes (A4)
