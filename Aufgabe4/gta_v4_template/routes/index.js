@@ -197,7 +197,7 @@ router.put('/api/geotags/:id', (req, res) => {
     let geoTag = JSON.parse(req.query.geoTagObject);
     // let value = req.body.valueOf(geoTag);
 
-    geoTag.changeGeoTag(geoTag, geoTagID);
+    tagStore.changeGeoTag(geoTag, geoTagID);
 
     res.json(JSON.stringify(geoTag));
 });
