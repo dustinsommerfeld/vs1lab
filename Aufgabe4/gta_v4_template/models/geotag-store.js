@@ -37,7 +37,9 @@ class InMemoryGeoTagStore {
     }
 
     addGeoTag(geotag) {
-        this.#geoTags.push(geotag);
+        if(this.searchGeoTag(geotag.name) == null) {
+            this.#geoTags.push(geotag);
+        }
     }
 
     removeGeoTag(name) {
