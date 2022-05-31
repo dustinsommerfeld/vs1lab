@@ -157,7 +157,7 @@ router.post('/api/geotags', (req, res) => {
     let geoTagAsJson = req.query.toJSON(geoTagObject);
     res.append('URL', geoTagAsJson.url);
 
-    res.json(JSON.stringify(geoTagAsJson));
+    res.status(201).json(JSON.stringify(geoTagAsJson));
 });
 
 /**
@@ -176,7 +176,7 @@ router.get('/api/geotags/:id', (req, res) => {
     let foundGeoTag = tagStore.searchGeoTag(geoTagID);
     //TODO Was wenn foundGeoTag == null, weil GeoTag mit dieser id nicht in Store?
 
-    res.json(JSON.stringify(foundGeoTag));
+    res.status(200).json(JSON.stringify(foundGeoTag));
 });
 
 /**
@@ -199,7 +199,7 @@ router.put('/api/geotags/:id', (req, res) => {
 
     tagStore.changeGeoTag(geoTag, geoTagID);
 
-    res.json(JSON.stringify(geoTag));
+    res.status(202).json(JSON.stringify(geoTag));
 });
 
 /**
@@ -215,7 +215,7 @@ router.put('/api/geotags/:id', (req, res) => {
 router.delete('/api/geotags/:id', (req, res) => {
     let geoTagID = req.params.id;
     let removedGeoTag = tagStore.removeGeoTag(geoTagID);
-    res.json(JSON.stringify(removedGeoTag.url));
+    res.status(203).json(JSON.stringify(removedGeoTag.url));
 });
 
 module.exports = router;
