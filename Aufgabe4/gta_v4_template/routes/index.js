@@ -123,16 +123,18 @@ router.post('/discovery', (req, res) => {
  * If 'latitude' and 'longitude' are available, it will be further filtered based on radius.
  */
 router.get('/api/geotags', (req, res) => {
-    let discoveryQuery = req.query.discovery_searchterm;
+    let discoveryQuery = req.query.searchterm;
+    let latitudeQuery = req.query.latitude;
+    let longitudeQuery = req.query.longitude;
     let nearbyGeoTags = tagStore.geoTags;
 
     // if searchterm, then filtered
-    if (req.body.discovery_searchterm != null) {
+    if (discoveryQuery !== "") {
         nearbyGeoTags = tagStore.searchNearbyGeoTags(discoveryQuery);
     }
 
     // if lat + long available, then filtered
-    if (req.body.discovery_latitude != null && req.body.discovery_longitude != null) {
+    if (discoveryQuery !== "" && (latitudeQuery !== "" && longitudeQuery !== "")) {
         nearbyGeoTags = tagStore.getNearbyGeoTags(nearbyGeoTags);
     }
 
@@ -150,17 +152,16 @@ router.get('/api/geotags', (req, res) => {
  * The new resource is rendered as JSON in the response.
  */
 router.post('/api/geotags', (req, res) => {
-    let name = req.body.discovery_name;
-    let latitude = parseFloat(req.body.discovery_latitude);
-    let longitude = parseFloat(req.body.discovery_longitude);
-    let hashtag = req.body.discovery_hashtag;
+    let name = req.body.name;
+    let latitude = parseFloat(req.body.location.latitude);
+    let longitude = parseFloat(req.body.location.longitude);
+    let hashtag = req.body.hashtag;
 
     let geoTagObject = new GeoTag(name, latitude, longitude, hashtag);
     tagStore.addGeoTag(geoTagObject);
-    let geoTagAsJson = req.query.toJSON(geoTagObject);
-    res.append('URL', geoTagAsJson.url);
+    res.append('URL', "api/geotags/" + name);
 
-    res.status(201).json(JSON.stringify(geoTagAsJson));
+    res.status(201).json(JSON.stringify(geoTagObject));
 });
 
 /**
@@ -197,8 +198,8 @@ router.get('/api/geotags/:id', (req, res) => {
  */
 router.put('/api/geotags/:id', (req, res) => {
     let geoTagID = req.params.id;
-    let geoTag = JSON.parse(req.query.geoTagObject);
-    // let value = req.body.valueOf(geoTag);
+    let geoTag = req.body;
+
 
     tagStore.changeGeoTag(geoTag, geoTagID);
 
@@ -218,7 +219,7 @@ router.put('/api/geotags/:id', (req, res) => {
 router.delete('/api/geotags/:id', (req, res) => {
     let geoTagID = req.params.id;
     let removedGeoTag = tagStore.removeGeoTag(geoTagID);
-    res.status(203).json(JSON.stringify(removedGeoTag.url));
+    res.status(203).json(JSON.stringify(removedGeoTag));
 });
 
 module.exports = router;

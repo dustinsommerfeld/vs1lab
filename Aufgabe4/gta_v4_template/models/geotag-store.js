@@ -43,7 +43,7 @@ class InMemoryGeoTagStore {
     }
 
     removeGeoTag(name) {
-        for (let i = 0; i < this.#geoTags.length - 1; i++) {
+        for (let i = 0; i < this.#geoTags.length; i++) {
             if (this.#geoTags[i].name === name) {
                 let removedGeoTag = this.#geoTags[i];
                 this.#geoTags.splice(i, 1);
