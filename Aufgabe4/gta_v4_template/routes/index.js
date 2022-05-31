@@ -12,7 +12,6 @@
 
 const express = require('express');
 const router = express.Router();
-
 /**
  * The module "geotag" exports a class GeoTagStore.
  * It represents geotags.
@@ -115,8 +114,7 @@ router.post('/discovery', (req, res) => {
  */
 router.get('/api/geotags', (req, res) => {
     let discoveryQuery = req.query.discovery_searchterm;
-    let nearbyGeoTags;
-    let filteredLocation;
+    let nearbyGeoTags = tagStore.geoTags;
 
     // if searchterm, then filtered
     if (req.body.discovery_searchterm != null) {
@@ -125,15 +123,10 @@ router.get('/api/geotags', (req, res) => {
 
     // if lat + long available, then filtered
     if (req.body.discovery_latitude != null && req.body.discovery_longitude != null) {
-        filteredLocation = tagStore.getNearbyGeoTags(nearbyGeoTags);
+        nearbyGeoTags = tagStore.getNearbyGeoTags(nearbyGeoTags);
     }
 
-    res.render('index', {
-        taglist: JSON.stringify(nearbyGeoTags),
-        userLatitude: req.body.discovery_latitude,
-        userLongitude: req.body.discovery_longitude,
-        mapTaglist: JSON.stringify(nearbyGeoTags)
-    })
+    res.json(JSON.stringify(nearbyGeoTags));
 });
 
 /**
