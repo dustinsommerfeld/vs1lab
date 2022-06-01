@@ -1,0 +1,47 @@
+//GET all GeoTags
+GET http://localhost:3000/api/geotags
+Accept: application/json
+###
+
+//POST one GeoTag
+POST http://localhost:3000/api/geotags
+Content-Type: application/json
+
+{
+  "name":"test",
+  "location": {"latitude":"49.013790","longitude":"8.404435"},
+  "hashtag":"#test"
+}
+###
+
+//GET one GeoTag
+GET http://localhost:3000/api/geotags/test
+Accept: application/json
+###
+
+//PUT change one GeoTag with name test to Castle2. test is deleted and Castle 2 inserted at the beginning
+PUT http://localhost:3000/api/geotags/test
+Content-Type: application/json
+
+{
+  "name":"Castle2",
+  "location": {"latitude":"49.013790","longitude":"8.404435"},
+  "hashtag":"#sight"
+}
+###
+
+//DELETE one GeoTag
+DELETE http://localhost:3000/api/geotags/Castle2
+###
+
+//GET all GeoTags filtered with searchterm
+GET http://localhost:3000/api/geotags?searchterm=Building
+###
+
+//GET all GeoTags filtered with location. All GeoTags inside the radius of this location
+GET http://localhost:3000/api/geotags?latitude=49.15528&longitude=8.62126
+###
+
+//GET all GeoTags filtered with searchterm AND location
+GET http://localhost:3000/api/geotags?searchterm=Building&latitude=49.15528&longitude=8.62126
+###

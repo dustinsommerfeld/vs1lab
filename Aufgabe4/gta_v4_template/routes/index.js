@@ -126,18 +126,35 @@ router.get('/api/geotags', (req, res) => {
     let discoveryQuery = req.query.searchterm;
     let latitudeQuery = req.query.latitude;
     let longitudeQuery = req.query.longitude;
+    let location = {
+        latitude: latitudeQuery,
+        longitude: longitudeQuery
+    }
+    let filterArray = [];
+    let distance;
     let nearbyGeoTags = tagStore.geoTags;
 
+    // if both availlable then filtered
+    if (discoveryQuery !== undefined && (latitudeQuery !== undefined && longitudeQuery !== undefined)) {
+        nearbyGeoTags = [];
+        filterArray = tagStore.searchNearbyGeoTags(discoveryQuery);
+        for(let i = 0; i < filterArray.length; i++) {
+            distance = tagStore.calculateDistance(filterArray[i], location);
+            if (distance < 0.270) {
+                nearbyGeoTags.push(filterArray[i]);
+            }
+        }
+        console.log(nearbyGeoTags)
+    }
     // if searchterm, then filtered
-    /*
-    if (discoveryQuery !== "") {
+    else if (discoveryQuery !== undefined) {
         nearbyGeoTags = tagStore.searchNearbyGeoTags(discoveryQuery);
-    } */
-
+    }
     // if lat + long available, then filtered
-    /* if (discoveryQuery !== "" && (latitudeQuery !== "" && longitudeQuery !== "")) {
-        nearbyGeoTags = tagStore.getNearbyGeoTags(nearbyGeoTags);
-    } */
+    else if (latitudeQuery !== undefined && longitudeQuery !== undefined) {
+        nearbyGeoTags = tagStore.getNearbyGeoTags(location);
+        console.log(nearbyGeoTags)
+    }
 
     res.json(JSON.stringify(nearbyGeoTags));
 });
