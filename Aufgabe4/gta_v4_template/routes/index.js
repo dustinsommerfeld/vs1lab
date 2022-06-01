@@ -129,14 +129,15 @@ router.get('/api/geotags', (req, res) => {
     let nearbyGeoTags = tagStore.geoTags;
 
     // if searchterm, then filtered
+    /*
     if (discoveryQuery !== "") {
         nearbyGeoTags = tagStore.searchNearbyGeoTags(discoveryQuery);
-    }
+    } */
 
     // if lat + long available, then filtered
-    if (discoveryQuery !== "" && (latitudeQuery !== "" && longitudeQuery !== "")) {
+    /* if (discoveryQuery !== "" && (latitudeQuery !== "" && longitudeQuery !== "")) {
         nearbyGeoTags = tagStore.getNearbyGeoTags(nearbyGeoTags);
-    }
+    } */
 
     res.json(JSON.stringify(nearbyGeoTags));
 });
