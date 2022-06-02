@@ -37,13 +37,17 @@ class InMemoryGeoTagStore {
     }
 
     addGeoTag(geotag) {
-        this.#geoTags.push(geotag);
+        if(this.searchGeoTag(geotag.name) == null) {
+            this.#geoTags.push(geotag);
+        }
     }
 
     removeGeoTag(name) {
-        for (let i = 0; i < this.#geoTags.length - 1; i++) {
+        for (let i = 0; i < this.#geoTags.length; i++) {
             if (this.#geoTags[i].name === name) {
+                let removedGeoTag = this.#geoTags[i];
                 this.#geoTags.splice(i, 1);
+                return removedGeoTag;
             }
         }
     }
@@ -55,7 +59,7 @@ class InMemoryGeoTagStore {
         for (let i = 0; i < this.#geoTags.length; i++) {
             distance = this.calculateDistance(location, this.#geoTags[i]);
             //distance < 0.282
-            if (distance < 10) {
+            if (distance < 0.270) {
                 nearbyGeoTags.push(this.#geoTags[i]);
             }
         }
@@ -83,6 +87,23 @@ class InMemoryGeoTagStore {
         }
 
         return nearbyGeoTags;
+    }
+
+    searchGeoTag(id){
+        for (let i = 0; i < this.#geoTags.length; i++) {
+            if(this.#geoTags[i].name === id) {
+                return this.#geoTags[i];
+            }
+        }
+        return null;
+    }
+
+    changeGeoTag(geoTag, id){
+        let foundGeoTag = this.searchGeoTag(id);
+        if(foundGeoTag !== undefined) {
+            this.removeGeoTag(foundGeoTag.name)
+            this.#geoTags.unshift(geoTag);
+        }
     }
 
     calculateDistance(from, to) {

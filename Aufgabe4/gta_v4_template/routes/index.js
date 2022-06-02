@@ -12,7 +12,6 @@
 
 const express = require('express');
 const router = express.Router();
-
 /**
  * The module "geotag" exports a class GeoTagStore.
  * It represents geotags.
@@ -41,8 +40,73 @@ tagStore.populate();
  *
  * As response, the ejs-template is rendered without geotag objects.
  */
+
 router.get('/', (req, res) => {
     res.render('index', { taglist: tagStore.geoTags, userLatitude: "", userLongitude: "", mapTaglist: JSON.stringify(tagStore.geoTags) })
+});
+
+/**
+ * Route '/tagging' for HTTP 'POST' requests.
+ * (http://expressjs.com/de/4x/api.html#app.post.method)
+ *
+ * Requests cary the fields of the tagging form in the body.
+ * (http://expressjs.com/de/4x/api.html#req.body)
+ *
+ * Based on the form data, a new geotag is created and stored.
+ *
+ * As response, the ejs-template is rendered with geotag objects.
+ * All result objects are located in the proximity of the new geotag.
+ * To this end, "GeoTagStore" provides a method to search geotags
+ * by radius around a given location.
+ */
+
+router.post('/tagging', (req, res) => {
+    let name = req.body.tagging_name;
+    let latitude = parseFloat(req.body.tagging_latitude);
+    let longitude = parseFloat(req.body.tagging_longitude);
+    let hashtag = req.body.tagging_hashtag;
+
+    let geoTagObject = new GeoTag(name, latitude, longitude, hashtag);
+
+    let nearbyGeoTags = tagStore.getNearbyGeoTags(geoTagObject);
+    nearbyGeoTags.push(geoTagObject);
+    tagStore.addGeoTag(geoTagObject);
+
+    res.render('index', { 
+        taglist: nearbyGeoTags, 
+        userLatitude: req.body.tagging_latitude, 
+        userLongitude: req.body.tagging_longitude, 
+        mapTaglist: JSON.stringify(nearbyGeoTags)  
+    })
+});
+
+/**
+ * Route '/discovery' for HTTP 'POST' requests.
+ * (http://expressjs.com/de/4x/api.html#app.post.method)
+ *
+ * Requests cary the fields of the discovery form in the body.
+ * This includes coordinates and an optional search term.
+ * (http://expressjs.com/de/4x/api.html#req.body)
+ *
+ * As response, the ejs-template is rendered with geotag objects.
+ * All result objects are located in the proximity of the given coordinates.
+ * If a search term is given, the results are further filtered to contain
+ * the term as a part of their names or hashtags.
+ * To this end, "GeoTagStore" provides methods to search geotags
+ * by radius and keyword.
+ */
+
+router.post('/discovery', (req, res) => {
+    let keyword = req.body.discovery_searchterm;
+
+    let nearbyGeoTags = tagStore.searchNearbyGeoTags(keyword);
+
+    res.render('index', { 
+        taglist: nearbyGeoTags, 
+        userLatitude: req.body.discovery_latitude, 
+        userLongitude: req.body.discovery_longitude, 
+        mapTaglist: JSON.stringify(nearbyGeoTags) 
+    })
 });
 
 // API routes (A4)
@@ -59,26 +123,40 @@ router.get('/', (req, res) => {
  * If 'latitude' and 'longitude' are available, it will be further filtered based on radius.
  */
 router.get('/api/geotags', (req, res) => {
-    let discoveryQuery = req.query.discovery_searchterm;
-    let nearbyGeoTags;
-    let filteredLocation;
+    let discoveryQuery = req.query.searchterm;
+    let latitudeQuery = req.query.latitude;
+    let longitudeQuery = req.query.longitude;
+    let location = {
+        latitude: latitudeQuery,
+        longitude: longitudeQuery
+    }
+    let filterArray = [];
+    let distance;
+    let nearbyGeoTags = tagStore.geoTags;
 
+    // if both availlable then filtered
+    if (discoveryQuery !== undefined && (latitudeQuery !== undefined && longitudeQuery !== undefined)) {
+        nearbyGeoTags = [];
+        filterArray = tagStore.searchNearbyGeoTags(discoveryQuery);
+        for(let i = 0; i < filterArray.length; i++) {
+            distance = tagStore.calculateDistance(filterArray[i], location);
+            if (distance < 0.270) {
+                nearbyGeoTags.push(filterArray[i]);
+            }
+        }
+        console.log(nearbyGeoTags)
+    }
     // if searchterm, then filtered
-    if (req.body.discovery_searchterm != null) {
+    else if (discoveryQuery !== undefined) {
         nearbyGeoTags = tagStore.searchNearbyGeoTags(discoveryQuery);
     }
-
     // if lat + long available, then filtered
-    if (req.body.discovery_latitude != null && req.body.discovery_longitude != null) {
-        filteredLocation = tagStore.getNearbyGeoTags(nearbyGeoTags);
+    else if (latitudeQuery !== undefined && longitudeQuery !== undefined) {
+        nearbyGeoTags = tagStore.getNearbyGeoTags(location);
+        console.log(nearbyGeoTags)
     }
 
-    res.render('index', {
-        taglist: JSON.stringify(nearbyGeoTags),
-        userLatitude: req.body.discovery_latitude,
-        userLongitude: req.body.discovery_longitude,
-        mapTaglist: JSON.stringify(nearbyGeoTags)
-    })
+    res.json(JSON.stringify(nearbyGeoTags));
 });
 
 /**
@@ -92,18 +170,16 @@ router.get('/api/geotags', (req, res) => {
  * The new resource is rendered as JSON in the response.
  */
 router.post('/api/geotags', (req, res) => {
-    let name = req.body.discovery_name;
-    let latitude = parseFloat(req.body.discovery_latitude);
-    let longitude = parseFloat(req.body.discovery_longitude);
-    let hashtag = req.body.discovery_hashtag;
+    let name = req.body.name;
+    let latitude = parseFloat(req.body.location.latitude);
+    let longitude = parseFloat(req.body.location.longitude);
+    let hashtag = req.body.hashtag;
 
     let geoTagObject = new GeoTag(name, latitude, longitude, hashtag);
+    tagStore.addGeoTag(geoTagObject);
+    res.append('URL', "api/geotags/" + name);
 
-    let geoTagAsJson = req.query.toJSON(geoTagObject);
-
-    res.render('index', {
-        resourceURL: JSON.stringify(geoTagAsJson.url)
-    })
+    res.status(201).json(JSON.stringify(geoTagObject));
 });
 
 /**
@@ -116,11 +192,13 @@ router.post('/api/geotags', (req, res) => {
  * The requested tag is rendered as JSON in the response.
  */
 router.get('/api/geotags/:id', (req, res) => {
+    //id is specified via name of specific GeoTag
     let geoTagID = req.params.id;
 
-    res.render('index', {
-        geotagID: JSON.stringify(geoTagID)
-    })
+    let foundGeoTag = tagStore.searchGeoTag(geoTagID);
+    //TODO Was wenn foundGeoTag == null, weil GeoTag mit dieser id nicht in Store?
+
+    res.status(200).json(JSON.stringify(foundGeoTag));
 });
 
 /**
@@ -138,14 +216,11 @@ router.get('/api/geotags/:id', (req, res) => {
  */
 router.put('/api/geotags/:id', (req, res) => {
     let geoTagID = req.params.id;
-    let geoTag = JSON.stringify(req.query.geoTagObject);
-    let value = req.body.valueOf(geoTag);
+    let geoTag = req.body;
 
-    geoTag.changeGeoTag(value, geoTagID); // keine Ahnung wie ich das mit der ID in Verbindung setze :D
 
-    res.render('index', {
-        resourceURL: JSON.stringify(geoTag.url)
-    })
+    tagStore.changeGeoTag(geoTag, geoTagID);
+    res.status(202).json(JSON.stringify(geoTag));
 });
 
 /**
@@ -160,38 +235,24 @@ router.put('/api/geotags/:id', (req, res) => {
  */
 router.delete('/api/geotags/:id', (req, res) => {
     let geoTagID = req.params.id;
-    let geoTag = JSON.stringify(req.query.geoTagObject);
-
-    geoTag.remove(geoTagID);
-
-    res.render('index', {
-        resourceURL: JSON.stringify(geoTag.url)
-    })
+    let removedGeoTag = tagStore.removeGeoTag(geoTagID);
+    res.status(203).json(JSON.stringify(removedGeoTag));
 });
 
-/* old tagging
-router.post('/tagging', (req, res) => {
-    let name = req.body.tagging_name;
-    let latitude = parseFloat(req.body.tagging_latitude);
-    let longitude = parseFloat(req.body.tagging_longitude);
-    let hashtag = req.body.tagging_hashtag;
-
-    let geoTagObject = new GeoTag(name, latitude, longitude, hashtag);
-
-    let nearbyGeoTags = tagStore.getNearbyGeoTags(geoTagObject);
-    nearbyGeoTags.push(geoTagObject);
-    tagStore.addGeoTag(geoTagObject);
-
-    res.render('index', { taglist: nearbyGeoTags, userLatitude: req.body.tagging_latitude, userLongitude: req.body.tagging_longitude, mapTaglist: JSON.stringify(nearbyGeoTags)  })
-}); */
-
-/* old discovery
-router.post('/discovery', (req, res) => {
-    let keyword = req.body.discovery_searchterm;
-
-    let nearbyGeoTags = tagStore.searchNearbyGeoTags(keyword);
-
-    res.render('index', { taglist: nearbyGeoTags, userLatitude: req.body.discovery_latitude, userLongitude: req.body.discovery_longitude, mapTaglist: JSON.stringify(nearbyGeoTags) })
-}); */
+router.get('/api/geotags/page/:number', (req, res) => {
+    let pageNumber = req.params.number;
+    console.log(pageNumber);
+    let geoTags = req.body;
+    console.log(geoTags.length)
+    let index = pageNumber * 5;
+    let retArray = [];
+    for (let i = index; i < geoTags.length; i++) {
+        retArray.push(geoTags[i]);
+        if(retArray.length === 5) {
+            break;
+        }
+    }
+    res.json(JSON.stringify(retArray));
+});
 
 module.exports = router;
