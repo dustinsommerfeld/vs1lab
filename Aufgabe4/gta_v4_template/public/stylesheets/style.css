@@ -205,6 +205,31 @@ input[type=text]::placeholder {
     display: block;
 }
 
+.discovery__taglist__pagination {
+    margin: 1rem 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.discovery__taglist__pagination li {
+    padding: 0.25rem;
+}
+
+.discovery__taglist__pagination li button {
+    padding: 0.25rem 0.35rem;
+    cursor: pointer;
+    border-radius: 0;
+    background: var(--background-color);
+    border: 1px solid var(--border-color);
+}
+
+.discovery__taglist__pagination li button:disabled {
+    cursor: not-allowed;
+}
+
 /* Styles for Footer Component */
 
 .footer {

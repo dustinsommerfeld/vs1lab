@@ -7,8 +7,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>GeoTagApp</title>
+
     <link rel="stylesheet" href="./stylesheets/style.css" />
+    <link rel="stylesheet" href="./assets/fontawesome/css/all.css" />
 </head>
 
 <body>
@@ -70,6 +73,23 @@
                         <% if (taglist !== undefined) taglist.forEach(function(gtag) { %>
                             <li><%= gtag.name %> (<%= gtag.latitude %>,<%= gtag.longitude %>) <%= gtag.hashtag %></li>
                         <% }); %>
+                    </ul>
+
+                    <ul class="discovery__taglist__pagination" id="discoveryPagination">
+                        <li>
+                            <button name="paginationPrev" id="paginationPrev" <%= //disabledButton %>>
+                                <i class="fa-solid fa-chevron-left"></i>
+                            </button>
+                        </li>
+                        <!-- TODO enable after programming backend
+                        <li><%= //currentPage %> / <%= //maxPage %> (<%= //maxListElements %>)</li>
+                        -->
+                        <li>1 / 3 (11)</li>
+                        <li>
+                            <button name="paginationNext" id="paginationNext" <%= //disabledButton %>>
+                                <i class="fa-solid fa-chevron-right"></i>
+                            </button>
+                        </li>
                     </ul>
                 </div>
 
