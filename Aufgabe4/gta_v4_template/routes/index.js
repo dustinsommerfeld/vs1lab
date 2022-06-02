@@ -220,7 +220,6 @@ router.put('/api/geotags/:id', (req, res) => {
 
 
     tagStore.changeGeoTag(geoTag, geoTagID);
-
     res.status(202).json(JSON.stringify(geoTag));
 });
 
@@ -238,6 +237,22 @@ router.delete('/api/geotags/:id', (req, res) => {
     let geoTagID = req.params.id;
     let removedGeoTag = tagStore.removeGeoTag(geoTagID);
     res.status(203).json(JSON.stringify(removedGeoTag));
+});
+
+router.get('/api/geotags/page/:number', (req, res) => {
+    let pageNumber = req.params.number;
+    console.log(pageNumber);
+    let geoTags = req.body;
+    console.log(geoTags.length)
+    let index = pageNumber * 5;
+    let retArray = [];
+    for (let i = index; i < geoTags.length; i++) {
+        retArray.push(geoTags[i]);
+        if(retArray.length === 5) {
+            break;
+        }
+    }
+    res.json(JSON.stringify(retArray));
 });
 
 module.exports = router;
