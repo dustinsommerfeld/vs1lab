@@ -59,7 +59,7 @@ class InMemoryGeoTagStore {
         for (let i = 0; i < this.#geoTags.length; i++) {
             distance = this.calculateDistance(location, this.#geoTags[i]);
             //distance < 0.282
-            if (distance < 0.270) {
+            if (distance < 0.00000000001) {
                 nearbyGeoTags.push(this.#geoTags[i]);
             }
         }
