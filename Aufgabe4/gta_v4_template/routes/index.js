@@ -240,7 +240,7 @@ router.delete('/api/geotags/:id', (req, res) => {
 });
 
 router.get('/api/geotags/page/:number', (req, res) => {
-    let pageNumber = req.params.number;
+    let pageNumber = req.params.number - 1;
     console.log(pageNumber);
     let geoTags = req.body;
     console.log(geoTags.length)
