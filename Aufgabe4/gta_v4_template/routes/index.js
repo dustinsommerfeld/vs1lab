@@ -196,8 +196,7 @@ router.get('/api/geotags/:id', (req, res) => {
     //id is specified via name of specific GeoTag
     let geoTagID = req.params.id;
 
-    let foundGeoTag = tagStore.searchGeoTag(geoTagID);
-    //TODO Was wenn foundGeoTag == null, weil GeoTag mit dieser id nicht in Store?
+    let foundGeoTag = tagStore.searchGeoTagDiscovery(geoTagID);
 
     res.status(200).json(JSON.stringify(foundGeoTag));
 });
