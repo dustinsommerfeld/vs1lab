@@ -156,6 +156,7 @@ router.get('/api/geotags', (req, res) => {
         console.log(nearbyGeoTags)
     }
 
+    console.log(nearbyGeoTags)
     res.json(JSON.stringify(nearbyGeoTags));
 });
 
@@ -179,7 +180,7 @@ router.post('/api/geotags', (req, res) => {
     tagStore.addGeoTag(geoTagObject);
     res.append('URL', "api/geotags/" + name);
 
-    res.status(201).json(JSON.stringify(geoTagObject));
+    res.status(201).json(JSON.stringify(tagStore.geoTags));
 });
 
 /**

@@ -28,6 +28,7 @@
             <h2>Tagging</h2>
 
             <form id="tag-form" action="/tagging" method="post">
+                <div>
                 <fieldset>
                     <legend>Add a new GeoTag</legend>
 
@@ -45,6 +46,7 @@
 
                     <input type="submit" id="add_tag_button" value="Add Tag" />
                 </fieldset>
+                </div>
             </form>
         </section>
 
@@ -69,7 +71,7 @@
 
             <div class="discovery__wrapper row row-inner">
                 <div class="discovery__taglist col-4 col-responsive">
-                    <ul class="discovery__results" id="discoveryResults">
+                    <ul class="discovery__results" id="discoveryResults" data-taglist="<%= taglist %>">
                         <% if (taglist !== undefined) taglist.forEach(function(gtag) { %>
                             <li><%= gtag.name %> (<%= gtag.latitude %>,<%= gtag.longitude %>) <%= gtag.hashtag %></li>
                         <% }); %>
@@ -108,7 +110,7 @@
     <!-- javascript -->
     <script src="./javascripts/geotagging.js"></script>
     <script src="./javascripts/location-helper.js"></script>
-    <script src="./javascripts/map-manager.js"></script>
+    <script src="./javascripts/map-manager.js"></script>asdas
 </body>
 
 </html>
