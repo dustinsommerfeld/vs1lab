@@ -219,7 +219,10 @@ input[type=text]::placeholder {
 }
 
 .discovery__taglist__pagination li button {
-    padding: 0.25rem 0.35rem;
+    padding: 0.25rem 0.4rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     cursor: pointer;
     border-radius: 0;
     background: var(--background-color);
