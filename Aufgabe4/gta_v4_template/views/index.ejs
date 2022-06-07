@@ -79,16 +79,13 @@
 
                     <ul class="discovery__taglist__pagination" id="discoveryPagination">
                         <li>
-                            <button name="paginationPrev" id="paginationPrev" <%= //disabledButton %>>
+                            <button name="paginationPrev" id="paginationPrev">
                                 <i class="fa-solid fa-chevron-left"></i>
                             </button>
                         </li>
-                        <!-- TODO enable after programming backend
-                        <li><%= //currentPage %> / <%= //maxPage %> (<%= //maxListElements %>)</li>
-                        -->
-                        <li>1 / 3 (11)</li>
+                        <li><span id="currentPage"></span> / <span id="maxPage"></span> (<span id="listElements"></span>)</li>
                         <li>
-                            <button name="paginationNext" id="paginationNext" <%= //disabledButton %>>
+                            <button name="paginationNext" id="paginationNext">
                                 <i class="fa-solid fa-chevron-right"></i>
                             </button>
                         </li>
@@ -110,7 +107,7 @@
     <!-- javascript -->
     <script src="./javascripts/geotagging.js"></script>
     <script src="./javascripts/location-helper.js"></script>
-    <script src="./javascripts/map-manager.js"></script>asdas
+    <script src="./javascripts/map-manager.js"></script>
 </body>
 
 </html>

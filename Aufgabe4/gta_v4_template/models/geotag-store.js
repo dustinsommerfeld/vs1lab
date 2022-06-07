@@ -80,8 +80,6 @@ class InMemoryGeoTagStore {
 
             if(stringMatch != null) {
                 geoTagMatching = this.#geoTags[i];
-                // let array = this.getNearbyGeoTags(geoTagMatching);
-
                 nearbyGeoTags.push(geoTagMatching);
             }
         }
@@ -93,7 +91,6 @@ class InMemoryGeoTagStore {
         for (let i = 0; i < this.#geoTags.length; i++) {
 
             if(this.#geoTags[i].name === id) {
-                console.log(this.#geoTags[i]);
                 return this.#geoTags[i];
             }
         }
@@ -110,10 +107,6 @@ class InMemoryGeoTagStore {
              if (stringMatch != null) {
                 return this.#geoTags[i];
             }
-            /*if(this.#geoTags[i].name === id) {
-                console.log(this.#geoTags[i]);
-                return this.#geoTags[i];
-            } */
         }
         return null;
     }

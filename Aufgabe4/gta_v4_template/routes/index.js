@@ -239,16 +239,17 @@ router.delete('/api/geotags/:id', (req, res) => {
     res.status(203).json(JSON.stringify(removedGeoTag));
 });
 
-router.get('/api/geotags/page/:number', (req, res) => {
+router.post('/api/geotags/page/:number', (req, res) => {
     let pageNumber = req.params.number - 1;
+    const NUMBER_OF_TAGS = 5;
     console.log(pageNumber);
     let geoTags = req.body;
     console.log(geoTags.length)
-    let index = pageNumber * 5;
+    let index = pageNumber * NUMBER_OF_TAGS;
     let retArray = [];
     for (let i = index; i < geoTags.length; i++) {
         retArray.push(geoTags[i]);
-        if(retArray.length === 5) {
+        if(retArray.length === NUMBER_OF_TAGS) {
             break;
         }
     }

@@ -46,7 +46,7 @@ GET http://localhost:3000/api/geotags?latitude=49.15528&longitude=8.62126
 GET http://localhost:3000/api/geotags?searchterm=Building&latitude=49.15528&longitude=8.62126
 ###
 
-GET http://localhost:3000/api/geotags/page/3
+POST http://localhost:3000/api/geotags/page/3
 Content-Type: application/json
 
 [{"name":"Castle","location":{"latitude":49.01379,"longitude":8.404435},"hashtag":"#sight"},{"name":"IWI","location":{"latitude":49.01379,"longitude":8.390071},"hashtag":"#edu"},{"name":"Building E","location":{"latitude":49.014993,"longitude":8.390049},"hashtag":"#campus"},{"name":"Building F","location":{"latitude":49.015608,"longitude":8.390112},"hashtag":"#campus"},{"name":"Building M","location":{"latitude":49.016171,"longitude":8.390155},"hashtag":"#campus"},{"name":"Building LI","location":{"latitude":49.015636,"longitude":8.389318},"hashtag":"#campus"},{"name":"Auditorium He","location":{"latitude":49.014915,"longitude":8.389264},"hashtag":"#campus"},{"name":"Building R","location":{"latitude":49.014992,"longitude":8.392365},"hashtag":"#campus"},{"name":"Building A","location":{"latitude":49.015738,"longitude":8.391619},"hashtag":"#campus"},{"name":"Building B","location":{"latitude":49.016843,"longitude":8.391372},"hashtag":"#campus"},{"name":"Building K","location":{"latitude":49.01319,"longitude":8.39209},"hashtag":"#campus"}]
