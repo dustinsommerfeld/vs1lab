@@ -71,7 +71,7 @@
 
             <div class="discovery__wrapper row row-inner">
                 <div class="discovery__taglist col-4 col-responsive">
-                    <ul class="discovery__results" id="discoveryResults" data-taglist="<%= taglist %>">
+                    <ul class="discovery__results" id="discoveryResults">
                         <% if (taglist !== undefined) taglist.forEach(function(gtag) { %>
                             <li><%= gtag.name %> (<%= gtag.latitude %>,<%= gtag.longitude %>) <%= gtag.hashtag %></li>
                         <% }); %>

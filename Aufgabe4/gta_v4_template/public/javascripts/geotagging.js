@@ -51,7 +51,7 @@ function getUpdateMap(geotags) {
     let mapManager = new MapManager("1B01AJ2nIgqKzmdYXhvgQbCVZltB6csW");
     let lat = parseFloat(document.getElementById("tagging_latitude").getAttribute("value"));
     let long = parseFloat(document.getElementById("tagging_longitude").getAttribute("value"));
-    let mapUrl = mapManager.getMapUrl(lat, long, JSON.parse(geotags), 10);
+    let mapUrl = mapManager.getMapUrl(lat, long, JSON.parse(geotags));
     document.getElementById("mapView").setAttribute("src", mapUrl);
 
     return geotags;
@@ -117,7 +117,6 @@ function updatePagination(geotags) {
 
     document.getElementById("currentPage").innerHTML = currentPage.toString();
     document.getElementById("listElements").innerHTML = actualTaglist.length;
-
     document.getElementById("maxPage").innerHTML = maxPageNumber.toString();
 }
 
@@ -154,7 +153,6 @@ async function getTagList(searchTerm) {
  * fetch for Pagination-Tags (5)
  */
 async function getPaginationTags(currentPage) {
-    console.log("test2" + actualTaglist);
     let geotags = await fetch("http://localhost:3000/api/geotags/page/" + currentPage, {
         method: "POST",
         headers: {"Content-Type": "application/json"},
@@ -181,6 +179,7 @@ document.getElementById("tag-form").addEventListener("submit", function (evt) {
     postAdd(geotag).then(getUpdateMap).then(updateList).then(getPaginationTags).then(updatePagination);
     document.getElementById("tagging_name").value = "";
     document.getElementById("tagging_hashtag").value = "";
+    document.getElementById("discovery_searchterm").value = "";
 }, true);
 
 /**
@@ -191,7 +190,8 @@ document.getElementById("discoveryFilterForm").addEventListener("submit", functi
 
     let searchTerm = document.getElementById("discovery_searchterm").value;
 
-    getTagList(searchTerm).then(getUpdateMap).then(updateList).then(getPaginationTags).then(updatePagination);
+    getTagList(searchTerm).then(getUpdateMap).then(updateList).then(getPaginationTags).then(updatePagination)
+        .catch(error => alert("Search term does not exist"));
 });
 
 /**
