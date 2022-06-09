@@ -134,7 +134,7 @@ router.get('/api/geotags', (req, res) => {
     let distance;
     let nearbyGeoTags = tagStore.geoTags;
 
-    // if both availlable then filtered
+    // if both available then filtered
     if (discoveryQuery !== undefined && (latitudeQuery !== undefined && longitudeQuery !== undefined)) {
         nearbyGeoTags = [];
         filterArray = tagStore.searchNearbyGeoTags(discoveryQuery);
@@ -144,20 +144,17 @@ router.get('/api/geotags', (req, res) => {
                 nearbyGeoTags.push(filterArray[i]);
             }
         }
-        console.log(nearbyGeoTags)
     }
-    // if searchterm, then filtered
+    // if search term, then filtered
     else if (discoveryQuery !== undefined) {
         nearbyGeoTags = tagStore.searchNearbyGeoTags(discoveryQuery);
     }
     // if lat + long available, then filtered
     else if (latitudeQuery !== undefined && longitudeQuery !== undefined) {
         nearbyGeoTags = tagStore.getNearbyGeoTags(location);
-        console.log(nearbyGeoTags)
     }
 
-    console.log(nearbyGeoTags)
-    res.json(JSON.stringify(nearbyGeoTags));
+    res.status(200).json(JSON.stringify(nearbyGeoTags));
 });
 
 /**
@@ -236,24 +233,28 @@ router.put('/api/geotags/:id', (req, res) => {
 router.delete('/api/geotags/:id', (req, res) => {
     let geoTagID = req.params.id;
     let removedGeoTag = tagStore.removeGeoTag(geoTagID);
-    res.status(203).json(JSON.stringify(removedGeoTag));
+    res.status(202).json(JSON.stringify(removedGeoTag));
 });
 
+/**
+ * Route '/api/geotags/page/:number' for HTTP 'POST' request.
+ * (Pagination)
+ */
 router.post('/api/geotags/page/:number', (req, res) => {
-    let pageNumber = req.params.number - 1;
     const NUMBER_OF_TAGS = 5;
-    console.log(pageNumber);
+
+    let pageNumber = req.params.number - 1;
     let geoTags = req.body;
-    console.log(geoTags.length)
     let index = pageNumber * NUMBER_OF_TAGS;
     let retArray = [];
+
     for (let i = index; i < geoTags.length; i++) {
         retArray.push(geoTags[i]);
         if(retArray.length === NUMBER_OF_TAGS) {
             break;
         }
     }
-    res.json(JSON.stringify(retArray));
+    res.status(201).json(JSON.stringify(retArray));
 });
 
 module.exports = router;
